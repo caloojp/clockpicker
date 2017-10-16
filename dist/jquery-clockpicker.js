@@ -1,12 +1,11 @@
 /*!
- * ClockPicker v0.2.0 (http://weareoutman.github.io/clockpicker/)
+ * ClockPicker v0.2.1 (http://weareoutman.github.io/clockpicker/)
  * Copyright 2014 Wang Shenwei.
  * Licensed under MIT (https://github.com/weareoutman/clockpicker/blob/gh-pages/LICENSE)
  */
 
-;(function(){
-	var $ = window.jQuery,
-		$win = $(window),
+;(function($){
+	var $win = $(window),
 		$doc = $(document),
 		$body;
 
@@ -878,4 +877,4 @@
 		// If we do have a list then we do not care about return values
 		return this.each(handleClockPickerRequest);
 	};
-}());
+}(jQuery));
