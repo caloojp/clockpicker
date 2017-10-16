@@ -1,5 +1,5 @@
 /*!
- * ClockPicker v0.0.7 (http://weareoutman.github.io/clockpicker/)
+ * ClockPicker v0.2.0 (http://weareoutman.github.io/clockpicker/)
  * Copyright 2014 Wang Shenwei.
  * Licensed under MIT (https://github.com/weareoutman/clockpicker/blob/gh-pages/LICENSE)
  */
@@ -140,8 +140,8 @@
 						}, duration / 2);
 					}
 				}).appendTo(this.amPmBlock);
-				
-				
+
+
 			$('<button type="button" class="btn btn-sm btn-default clockpicker-button pm-button">' + "PM" + '</button>')
 				.on("click", function() {
 					self.amOrPm = 'PM';
@@ -153,9 +153,9 @@
 						}, duration / 2);
 					}
 				}).appendTo(this.amPmBlock);
-				
+
 		}
-		
+
 		if (! options.autoclose) {
 			// If autoclose is not setted, append a button
 			$('<button type="button" class="btn btn-sm btn-default btn-block clockpicker-button">' + options.donetext + '</button>')
@@ -200,6 +200,10 @@
 			}
 		} else {
 			for (i = 0; i < 24; i += options.hourstep) {
+				var isDisabled = false;
+				if (options.disabledhours && $.inArray(i, options.disabledhours) != -1) {
+					var isDisabled = true;
+				}
 				tick = tickTpl.clone();
 				radian = i / 6 * Math.PI;
 				var inner = i > 0 && i < 13;
@@ -211,9 +215,14 @@
 				if (inner) {
 					tick.css('font-size', '120%');
 				}
+				if (isDisabled) {
+					tick.addClass('disabled');
+				}
 				tick.html(i === 0 ? '00' : i);
 				hoursView.append(tick);
-				tick.on(mousedownEvent, mousedown);
+				if (!isDisabled) {
+					tick.on(mousedownEvent, mousedown);
+				}
 			}
 		}
 
@@ -422,7 +431,8 @@
 		hourstep: 1,		// allow to multi increment the hour
 		minutestep: 1,		// allow to multi increment the minute
 		ampmSubmit: false,	// allow submit with AM and PM buttons instead of the minute selection/picker
-		addonOnly: false	// only open on clicking on the input-addon
+		addonOnly: false,	// only open on clicking on the input-addon
+		disabledhours: null,	// disabled hours (only 24 hour mode)
 	};
 
 	// Show or hide popover
@@ -555,13 +565,13 @@
 
 			this.isAppended = true;
 		}
-		
+
 		// Get the time from the input field
 		this.parseInputValue();
-		
+
 		this.spanHours.html(leadingZero(this.hours));
 		this.spanMinutes.html(leadingZero(this.minutes));
-		
+
 		if (this.options.twelvehour) {
 			this.spanAmPm.empty().append(this.amOrPm);
 		}
@@ -711,6 +721,9 @@
 			if (value === 24) {
 				value = 0;
 			}
+			if (dragging && !options.twelvehour && options.disabledhours && $.inArray(value, options.disabledhours) != -1) {
+				return;
+			}
 		} else {
 			value *= options.minutestep;
 			if (value === 60) {
@@ -790,7 +803,7 @@
 		var last = this.input.prop('value'),
 			outHours = this.hours,
 			value = ':' + leadingZero(this.minutes);
-		
+
 		if (this.isHTML5 && this.options.twelvehour) {
 			if (this.hours < 12 && this.amOrPm === 'PM') {
 				outHours += 12;
@@ -799,16 +812,16 @@
 				outHours = 0;
 			}
 		}
-		
+
 		value = leadingZero(outHours) + value;
-		
+
 		if (!this.isHTML5 && this.options.twelvehour) {
 			value = value + this.amOrPm;
 		}
-		
+
 		this.input.prop('value', value);
 		if (value !== last) {
-			this.input.triggerHandler('change');
+			this.input.trigger('change');
 			if (! this.isInput) {
 				this.element.trigger('change');
 			}
