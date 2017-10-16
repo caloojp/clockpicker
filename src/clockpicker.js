@@ -4,9 +4,8 @@
  * Licensed under MIT (https://github.com/weareoutman/clockpicker/blob/gh-pages/LICENSE)
  */
 
-;(function(){
-	var $ = window.jQuery,
-		$win = $(window),
+;(function($){
+	var $win = $(window),
 		$doc = $(document),
 		$body;
 
@@ -878,4 +877,4 @@
 		// If we do have a list then we do not care about return values
 		return this.each(handleClockPickerRequest);
 	};
-}());
+}(jQuery));
